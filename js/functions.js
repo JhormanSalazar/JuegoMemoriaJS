@@ -50,11 +50,33 @@ let imagenes = [
   },
 ];
 
+// arrays para comparar
 let nombreImg = [];
 let posicionImg = [];
 
+// variables contadores
+let aciertos = 0;
+let intentos = 0;
+let tiempo = 60;
+
+// seleccionar contadores en el dom
+let mostrarIntentos = d.getElementById("intentos");
+let mostrarAciertos = d.getElementById("aciertos");
+console.log(mostrarAciertos, mostrarIntentos);
+let mostrarTiempo = d.getElementById("tiempo");
+
 let tablero = d.querySelector(".tablero");
 agregarImagenes();
+
+// funcion para que la ronda dure 60 segundos
+
+let tiempoTranscurrido = setInterval(() => {
+  tiempo--;
+  mostrarTiempo.textContent = tiempo;
+  if (tiempo === 0) {
+    clearInterval(tiempoTranscurrido);
+  }
+}, 1000);
 
 // Agregar imagenes al tablero
 function agregarImagenes() {
@@ -77,6 +99,12 @@ function agregarImagenes() {
 function descrubrirIMG() {
   let idIMG = this.id; // se obtiene el id del imagen que donde fue llamado el evento
   this.src = imagenes[idIMG].url; // mostramos la imagen
+
+  // validar si ya se hizo clic en la imagen antes
+  if (posicionImg.includes(idIMG)) {
+    return;
+  }
+
   nombreImg.push(imagenes[idIMG].name); // la guardamos para comparar despues
   posicionImg.push(idIMG); // guardamos la posicion de la img
 
@@ -98,11 +126,24 @@ function comparar() {
 
     allImages[posicionImg[0]].removeEventListener("click", descrubrirIMG);
     allImages[posicionImg[1]].removeEventListener("click", descrubrirIMG);
-    //alert("las imagenes son iguales")
+    aciertos++;
+    mostrarAciertos.textContent = aciertos;
   } else {
     allImages[posicionImg[0]].src = "images/logo-tapar.jpg";
     allImages[posicionImg[1]].src = "images/logo-tapar.jpg";
+    intentos++;
+    mostrarIntentos.textContent = intentos;
   }
+
   nombreImg = [];
   posicionImg = [];
+
+  // comprobar la cantidad de aciertos para ganar
+
+  if (aciertos === 6) {
+    setTimeout(() => {
+      alert("Felicitaciones, pasaste al siguiente nivel 😎");
+      location.reload(); //el objeto location tiene informacion sobre la pagina en general, su origin, href
+    }, 300);
+  }
 }
