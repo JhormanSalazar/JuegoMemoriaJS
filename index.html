@@ -1,16 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
     <title>Juego de memoria</title>
-</head>
-<body>
-    <h1 class="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+  </head>
+  <body>
+    <div class="container py-4">
+      <div class="row mb-3">
+        <div class="col-12 text-center">
+          <h1>Juego de memoria / Jujutsu Kaisen</h1>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <ul class="nav justify-content-center gap-3">
+            <li class="nav-item">
+              <span class="nav-link disabled">Jugador: <span id="jugador">1</span></span>
+            </li>
+            <li class="nav-item">
+              <span class="nav-link disabled">Intentos: <span id="intentos">0</span></span>
+            </li>
+            <li class="nav-item">
+              <span class="nav-link disabled">Aciertos: <span id="aciertos">0</span></span>
+            </li>
+            <li class="nav-item">
+              <span class="nav-link disabled">Tiempo: <span id="tiempo">0</span></span>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-warning">Reiniciar</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-7">
+          <h2>Tablero de juego</h2>
+          <hr />
+          <div class="row tablero gx-2 gy-2">
+            <!-- Aquí van las imágenes del juego -->
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <h2>Historial</h2>
+          <hr />
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Tiempo de Juego</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Historial dinámico aquí -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+      crossorigin="anonymous"
+    ></script>
     <script src="js/functions.js"></script>
-</body>
+  </body>
 </html>
