@@ -1,4 +1,5 @@
 const d = document;
+// imagenes
 let imagenesN1 = [
   {
     name: "Itadori",
@@ -117,6 +118,100 @@ let imagenesN2 = [
   },
 ];
 
+let imagenesN3 = [
+  {
+    name: "Meimei",
+    url: "images/meimei.jpg",
+  },
+  {
+    name: "Hakari",
+    url: "images/Hakari.jpg",
+  },
+
+  {
+    name: "Higuruma",
+    url: "images/higuruma.jpg",
+  },
+  {
+    name: "Kenjaku",
+    url: "images/kenjaku.jpg",
+  },
+
+  {
+    name: "Meimei",
+    url: "images/meimei.jpg",
+  },
+  {
+    name: "Miwa",
+    url: "images/miwa.jpg",
+  },
+  {
+    name: "Rika",
+    url: "images/rika.jpg",
+  },
+  {
+    name: "Todou",
+    url: "images/todou.jpg",
+  },
+  {
+    name: "Toji",
+    url: "images/toji.jpg",
+  },
+  {
+    name: "Yuki",
+    url: "images/yuki.jpg",
+  },
+  {
+    name: "Meimei",
+    url: "images/meimei.jpg",
+  },
+  {
+    name: "Hakari",
+    url: "images/Hakari.jpg",
+  },
+
+  {
+    name: "Higuruma",
+    url: "images/higuruma.jpg",
+  },
+  {
+    name: "Kenjaku",
+    url: "images/kenjaku.jpg",
+  },
+
+  {
+    name: "Meimei",
+    url: "images/meimei.jpg",
+  },
+  {
+    name: "Miwa",
+    url: "images/miwa.jpg",
+  },
+  {
+    name: "Rika",
+    url: "images/rika.jpg",
+  },
+  {
+    name: "Todou",
+    url: "images/todou.jpg",
+  },
+  {
+    name: "Toji",
+    url: "images/toji.jpg",
+  },
+  {
+    name: "Yuki",
+    url: "images/yuki.jpg",
+  },
+];
+
+// sonidos
+const sonidoFondo = new Audio("../sounds/musica-de-fondo.mp3");
+const sonidoN3Fondo = new Audio("../sounds/nivel3-fondo.mp3");
+const sonidoPerder = new Audio("../sounds/perder-nivel.mp3");
+const sonidoNivel3Fondo = new Audio("../sounds/nivel3-fondo.mp3");
+const sonidoGanar = new Audio("../sounds/ganar.mp3");
+
 let tiempoTranscurrido;
 let btnIniciar = d.querySelector(".btn-iniciar");
 let tablero = d.querySelector(".tablero");
@@ -142,16 +237,30 @@ btnIniciar.addEventListener("click", iniciarJuego);
 
 // funcion de iniciar juego
 function iniciarJuego() {
+  if (nivel != 3) {
+    sonidoFondo.loop = true;
+    sonidoFondo.play().catch((error) => {
+      console.warn("No se pudo reproducir el sonido de fondo:", error);
+    });
+  } else {
+    sonidoN3Fondo.play();
+  }
+
   tiempoTranscurrido = setInterval(() => {
     tiempo--;
     mostrarTiempo.textContent = tiempo;
-    if (tiempo === 20) {
+    if (tiempo < 20) {
       mostrarTiempo.style.color = "red";
       mostrarTiempo.style.fontSize = "20px";
     } else if (tiempo === 0) {
+      sonidoN3Fondo.pause();
+      sonidoFondo.pause();
+      sonidoPerder.play();
       alert("Se agoto el tiempo! 😅");
       clearInterval(tiempoTranscurrido);
-      location.reload(); //el objeto location tiene informacion sobre la pagina en general, su origin, href
+      setTimeout(() => {
+        location.reload(); //el objeto location tiene informacion sobre la pagina en general, su origin, href
+      }, 2000);
     }
   }, 1000);
   // agregamos las imagenes cuando inicie el juego
@@ -169,10 +278,16 @@ function limpiarTablero() {
 
 // Agregar imagenes al tablero
 function agregarImagenes() {
-  let imagenesNivelActual = nivel === 1 ? imagenesN1 :
-                            nivel === 2 ? imagenesN2 :
-                            nivel === 3 ? imagenesN3 : [];
+  let imagenesNivelActual =
+    nivel === 1
+      ? imagenesN1
+      : nivel === 2
+      ? imagenesN2
+      : nivel === 3
+      ? imagenesN3
+      : [];
 
+  imagenesNivelActual.sort(() => Math.random() - 0.5);
   imagenesNivelActual.forEach((img, index) => {
     crearCartas(index);
   });
@@ -184,6 +299,7 @@ function crearCartas(index) {
   div.className = "col-3";
   let card = d.createElement("div");
   card.className = "card";
+  card.style.cursor = "pointer"; // 👈 Añade esto
   let image = d.createElement("img");
   image.className = "img-fluid alto-img";
   image.src = "images/logo-tapar.jpg";
@@ -195,7 +311,7 @@ function crearCartas(index) {
 }
 
 function descrubrirIMG() {
-  imagenesNivel =
+  let imagenesNivel =
     nivel == 1
       ? imagenesN1
       : nivel == 2
@@ -205,6 +321,7 @@ function descrubrirIMG() {
       : [];
   let idIMG = this.id; // se obtiene el id del imagen que donde fue llamado el evento
   this.src = imagenesNivel[idIMG].url; // mostramos la imagen
+  new Audio("../sounds/seleccionar.mp3").play();
 
   // validar si ya se hizo clic en la imagen antes
   if (posicionImg.includes(idIMG)) {
@@ -227,6 +344,7 @@ function comparar() {
   let allImages = d.querySelectorAll(".tablero .card img");
   // comparar si coinciden las imagenes
   if (nombreImg[0] == nombreImg[1]) {
+    new Audio("../sounds/coincide.mp3").play();
     allImages[posicionImg[0]].src = "images/ok.jpg";
     allImages[posicionImg[1]].src = "images/ok.jpg";
 
@@ -235,6 +353,7 @@ function comparar() {
     aciertos++;
     mostrarContadores();
   } else {
+    new Audio("../sounds/equivocarse.mp3").play();
     allImages[posicionImg[0]].src = "images/logo-tapar.jpg";
     allImages[posicionImg[1]].src = "images/logo-tapar.jpg";
     intentos++;
@@ -256,11 +375,16 @@ function pasarNivel() {
     }, 300);
   } else if (nivel === 2 && aciertos === 8) {
     alert("Felicitaciones, pasaste al siguiente nivel 😎!");
-    avanzarNivel(3, 30);
-  }
-  else if (nivel === 3 && aciertos === 10) {
+    avanzarNivel(3, 38);
+    sonidoFondo.pause();
+    sonidoNivel3Fondo.play();
+  } else if (nivel === 3 && aciertos === 10) {
+    sonidoNivel3Fondo.pause();
+    sonidoGanar.play();
     alert("Felicitaciones, ganaste el juego 🙌😉!");
+    setTimeout(() => {
     location.reload();
+    }, 5000);
   }
 }
 
