@@ -12,8 +12,12 @@
     <link rel="stylesheet" href="css/styles.css" />
     <title>Juego de memoria</title>
   </head>
-  <body>
-    <div class="container py-4">
+  <body class="fondo-oscuro">
+    <!-- Capa oscura del fondo -->
+    <div class="fondo-overlay"></div>
+
+    <!-- Contenido principal -->
+    <div class="container py-4 contenido">
       <div class="row mb-3">
         <div class="col-12 text-center">
           <h1>Juego de memoria / Jujutsu Kaisen</h1>
@@ -24,7 +28,7 @@
         <div class="col-12">
           <ul class="nav justify-content-center gap-3">
             <li class="nav-item">
-              <span class="nav-link disabled">Jugador: <span id="jugador">1</span></span>
+              <span class="nav-link disabled">Jugador: <span id="jugador"></span></span>
             </li>
             <li class="nav-item">
               <span class="nav-link disabled">Intentos: <span id="intentos">0</span></span>
@@ -39,7 +43,7 @@
               <span class="nav-link disabled">Nivel: <span id="nivel">0</span></span>
             </li>
             <li class="nav-item">
-              <button class="btn btn-warning btn-iniciar">Iniciar</button>
+              <button class="btn btn-warning btn-iniciar" style="color: white;">Iniciar</button>
             </li>
           </ul>
         </div>
@@ -57,12 +61,14 @@
         <div class="col-md-5">
           <h2>Historial</h2>
           <hr />
-          <table class="table table-bordered table-striped">
+          <table class="table table-bordered table-striped records">
             <thead class="table-dark">
               <tr>
                 <th>#</th>
                 <th>Jugador</th>
                 <th>Tiempo de Juego</th>
+                <th>Intentos totales</th>
+                <th>Tiempo de sobra</th>
               </tr>
             </thead>
             <tbody>
@@ -73,11 +79,47 @@
       </div>
     </div>
 
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="modal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Registrar jugador</h1>
+            <button
+              type="button"
+              class="btn-close cerrar"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label">Nombre jugador:</label>
+                <input type="text" class="form-control nombre-jugador" id="recipient-name" />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary registrar-jugador">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
       crossorigin="anonymous"
     ></script>
     <script src="js/functions.js"></script>
+    <script src="js/guardarDatos.js"></script>
   </body>
 </html>

@@ -9,7 +9,69 @@
 
 .tablero div img:hover {
   transform: scale(1.1);
-  box-shadow: 1px -1px 31px -2px rgba(199,22,22,0.67);
--webkit-box-shadow: 1px -1px 31px -2px rgba(199,22,22,0.67);
--moz-box-shadow: 1px -1px 31px -2px rgba(199,22,22,0.67);
+  box-shadow: 1px -1px 31px -2px rgba(199, 22, 22, 0.67);
+  -webkit-box-shadow: 1px -1px 31px -2px rgba(199, 22, 22, 0.67);
+  -moz-box-shadow: 1px -1px 31px -2px rgba(199, 22, 22, 0.67);
+}
+
+/* Fondo por nivel */
+.fondo-nivel-1 {
+  background-image: url("../images/fondoJJK1.png");
+}
+
+.fondo-nivel-2 {
+  background-image: url("../images/fondoJJK2.jpeg");
+}
+
+.fondo-nivel-3 {
+  background-image: url("../images/fondoJJK3.png");
+}
+
+.fondo-nivel-1, .fondo-nivel-2, .fondo-nivel-3 {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  min-height: 100vh;
+  color: #f0f0f0;
+}
+
+/* Capa oscura encima del fondo */
+.fondo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Contenido encima del overlay */
+.contenido {
+  position: relative;
+  z-index: 1;
+}
+
+/* Colores claros en tabla, inputs, etc */
+.table, .form-control {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.table thead th {
+  color: #fff;
+}
+
+/* Forzar texto claro en nav-link disabled */
+.nav-link.disabled {
+  color: #ffffff !important;
+  opacity: 1;
+  font-weight: 500;
+}
+
+/* Estilo botones */
+.btn {
+  font-weight: bold;
 }

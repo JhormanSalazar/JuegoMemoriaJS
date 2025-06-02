@@ -1,4 +1,7 @@
 const d = document;
+const body = d.body;
+body.classList.add("fondo-nivel-1");
+
 // imagenes
 let imagenesN1 = [
   {
@@ -74,7 +77,7 @@ let imagenesN2 = [
   },
   {
     name: "Choso",
-    url: "images/nanami.jpg",
+    url: "images/choso.jpg",
   },
   {
     name: "Mahoraga",
@@ -106,7 +109,7 @@ let imagenesN2 = [
   },
   {
     name: "Choso",
-    url: "images/nanami.jpg",
+    url: "images/choso.jpg",
   },
   {
     name: "Mahoraga",
@@ -212,11 +215,14 @@ const sonidoPerder = new Audio("../sounds/perder-nivel.mp3");
 const sonidoNivel3Fondo = new Audio("../sounds/nivel3-fondo.mp3");
 const sonidoGanar = new Audio("../sounds/ganar.mp3");
 
+// campos del header de la pagina
 let tiempoTranscurrido;
 let btnIniciar = d.querySelector(".btn-iniciar");
 let tablero = d.querySelector(".tablero");
 let nivel = 1;
 let mostrarNivel = d.getElementById("nivel");
+mostrarNivel.textContent = nivel;
+let mostrarJugador = d.querySelector("#jugador");
 
 // arrays para comparar
 let nombreImg = [];
@@ -225,18 +231,33 @@ let posicionImg = [];
 // variables contadores
 let aciertos = 0;
 let intentos = 0;
-let tiempo = 60;
+let totalIntentos = 0;
+let tiempo = 50;
+let totalTiempo = 0;
+let tiempoSobrante = 0;
 
 // seleccionar contadores en el dom
 let mostrarIntentos = d.getElementById("intentos");
 let mostrarAciertos = d.getElementById("aciertos");
 let mostrarTiempo = d.getElementById("tiempo");
 
+d.addEventListener("DOMContentLoaded", () => {
+  mostrarDatos();
+});
+
 // agregar evento al boton para iniciar el juego
 btnIniciar.addEventListener("click", iniciarJuego);
 
 // funcion de iniciar juego
 function iniciarJuego() {
+  // Verifica si ya se registró un nombre
+  if (!mostrarJugador.textContent) {
+    ventanaModal(); // muestra la ventana si aún no se registró
+    return;
+  }
+
+  if (tiempoTranscurrido) return;
+
   if (nivel != 3) {
     sonidoFondo.loop = true;
     sonidoFondo.play().catch((error) => {
@@ -249,48 +270,29 @@ function iniciarJuego() {
   tiempoTranscurrido = setInterval(() => {
     tiempo--;
     mostrarTiempo.textContent = tiempo;
+
     if (tiempo < 20) {
       mostrarTiempo.style.color = "red";
       mostrarTiempo.style.fontSize = "20px";
-    } else if (tiempo === 0) {
+    }
+
+    if (tiempo <= 0) {
+      clearInterval(tiempoTranscurrido);
+      tiempoTranscurrido = null; // importante: limpiar la referencia
+
       sonidoN3Fondo.pause();
       sonidoFondo.pause();
       sonidoPerder.play();
-      alert("Se agoto el tiempo! 😅");
-      clearInterval(tiempoTranscurrido);
+      alert("¡Se agotó el tiempo! 😅");
       setTimeout(() => {
-        location.reload(); //el objeto location tiene informacion sobre la pagina en general, su origin, href
-      }, 2000);
+        location.reload();
+      }, 5000);
     }
   }, 1000);
-  // agregamos las imagenes cuando inicie el juego
+
   agregarImagenes();
-
   mostrarNivel.textContent = nivel;
-
   btnIniciar.removeEventListener("click", iniciarJuego);
-}
-
-// limpiar tablero
-function limpiarTablero() {
-  tablero.innerHTML = "";
-}
-
-// Agregar imagenes al tablero
-function agregarImagenes() {
-  let imagenesNivelActual =
-    nivel === 1
-      ? imagenesN1
-      : nivel === 2
-      ? imagenesN2
-      : nivel === 3
-      ? imagenesN3
-      : [];
-
-  imagenesNivelActual.sort(() => Math.random() - 0.5);
-  imagenesNivelActual.forEach((img, index) => {
-    crearCartas(index);
-  });
 }
 
 // funcion para crear cartas
@@ -371,19 +373,34 @@ function pasarNivel() {
   if (nivel === 1 && aciertos === 6) {
     setTimeout(() => {
       alert("Felicitaciones, pasaste al siguiente nivel 😁!");
+      totalIntentos += intentos;
+      totalTiempo += tiempo;
+      tiempoSobrante += 50 - tiempo;
       avanzarNivel(2, 45);
     }, 300);
   } else if (nivel === 2 && aciertos === 8) {
-    alert("Felicitaciones, pasaste al siguiente nivel 😎!");
-    avanzarNivel(3, 38);
-    sonidoFondo.pause();
-    sonidoNivel3Fondo.play();
-  } else if (nivel === 3 && aciertos === 10) {
-    sonidoNivel3Fondo.pause();
-    sonidoGanar.play();
-    alert("Felicitaciones, ganaste el juego 🙌😉!");
     setTimeout(() => {
-    location.reload();
+      alert("Felicitaciones, pasaste al siguiente nivel 😎!");
+      totalIntentos += intentos;
+      totalTiempo += tiempo;
+      tiempoSobrante += 50 - tiempo;
+      avanzarNivel(3, 38);
+    }, 300);
+    sonidoFondo.pause();
+  } else if (nivel === 3 && aciertos === 10) {
+    setTimeout(() => {
+      totalIntentos += intentos;
+      totalTiempo += tiempo;
+      tiempoSobrante += 50 - tiempo;
+      obtenerDatos();
+      sonidoNivel3Fondo.pause();
+      sonidoGanar.play();
+      alert("Felicitaciones, ganaste el juego 🙌😉!");
+    }, 300);
+    clearInterval(tiempoTranscurrido);
+    tiempoTranscurrido = null;
+    setTimeout(() => {
+      location.reload();
     }, 5000);
   }
 }
@@ -392,11 +409,39 @@ function avanzarNivel(siguienteNivel, nuevoTiempo) {
   intentos = 0;
   aciertos = 0;
   clearInterval(tiempoTranscurrido);
+  tiempoTranscurrido = null;
   tiempo = nuevoTiempo;
   nivel = siguienteNivel;
   mostrarContadores();
-  limpiarTablero();
   btnIniciar.addEventListener("click", iniciarJuego);
+}
+
+function agregarImagenes() {
+  // Selecciona el arreglo correcto según el nivel
+  let imagenesNivel =
+    nivel === 1
+      ? [...imagenesN1]
+      : nivel === 2
+      ? [...imagenesN2]
+      : nivel === 3
+      ? [...imagenesN3]
+      : [];
+
+  // Mezclar el arreglo aleatoriamente
+  imagenesNivel.sort(() => Math.random() - 0.5);
+
+  // Limpiar el tablero
+  tablero.innerHTML = "";
+
+  // Crear las cartas
+  for (let i = 0; i < imagenesNivel.length; i++) {
+    crearCartas(i);
+  }
+
+  // Guardar temporalmente las imágenes mezcladas para que descrubrirIMG funcione
+  if (nivel === 1) imagenesN1 = imagenesNivel;
+  if (nivel === 2) imagenesN2 = imagenesNivel;
+  if (nivel === 3) imagenesN3 = imagenesNivel;
 }
 
 // funcion para renderizar los contadores
@@ -405,4 +450,39 @@ function mostrarContadores() {
   mostrarAciertos.textContent = aciertos;
   mostrarTiempo.textContent = tiempo;
   mostrarNivel.textContent = nivel;
+
+  // CAMBIAR FONDO SEGÚN NIVEL
+  body.classList.remove("fondo-nivel-2", "fondo-nivel-3");
+
+  if (nivel === 2) {
+    body.classList.add("fondo-nivel-2");
+  } else if (nivel === 3) {
+    body.classList.add("fondo-nivel-3");
+  }
+}
+
+// mostrar ventana modal
+function ventanaModal() {
+  let mostrarModal = d.querySelector("#modal");
+  let cerrarModal = d.querySelectorAll(".cerrar");
+  let inputJugador = d.querySelector(".nombre-jugador");
+  let btnGuardar = d.querySelector(".registrar-jugador");
+
+  // añadir evento para cerrar modal
+  cerrarModal.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      mostrarModal.classList.remove("show");
+      mostrarModal.style.display = "none";
+    });
+  });
+
+  mostrarModal.classList.add("show");
+  mostrarModal.style.display = "block";
+
+  btnGuardar.addEventListener("click", () => {
+    mostrarJugador.textContent = inputJugador.value;
+    mostrarModal.classList.remove("show");
+    mostrarModal.style.display = "none";
+    iniciarJuego();
+  });
 }
